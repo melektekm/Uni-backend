@@ -13,18 +13,20 @@ class CreateEmployeesTable extends Migration
      */
     public function up()
     {
-        Schema::create('employees', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('department');        
-            $table->string('email')->unique();
-            $table->string('password')->nullable();
-            $table->string('role')->default('employee');
-            $table->boolean('status')->default(false)->nullable();
-            $table->timestamps();
-        }
-    );
-     
+        Schema::create(
+            'employees',
+            function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                // $table->unsignedBigInteger('role');      
+                $table->string('email')->unique();
+                $table->string('password')->nullable();
+                $table->string('role')->default('employee');
+                $table->boolean('status')->default(false)->nullable();
+                $table->timestamps();
+            }
+        );
+
     }
 
 

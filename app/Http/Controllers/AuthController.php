@@ -29,17 +29,17 @@ class AuthController extends Controller
             $request->all(),
             [
                 'name' => ['required', 'string'],
-                'department' => ['required'],
                 'role' => ['required'],
                 'email' => ['required', 'string', 'unique:employees'],
+                //make the email to account or user
             ]
         );
-        
-    
+
+
         $validator->sometimes('email', 'email', function ($input) {
             return $input->role === 'employee';
         });
-        
+
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()], 422);
         }
@@ -49,21 +49,20 @@ class AuthController extends Controller
 
             $employee = Employee::create([
                 'name' => $request->name,
-                'department' => $request->department,
                 'email' => $request->email,
-                'role' =>$request->role ?? 'employee',
+                'role' => $request->role ?? 'employee',
                 'password' => null,
             ]);
-            if($request->role=="employee"){
+            if ($request->role == "employee") {
 
-            
-            Account::create([
-                'employee_id' => $employee->id,
-                'balance' => 0,
-                'status' => 'active',
-            ]);
-        }
-           
+
+                Account::create([
+                    'employee_id' => $employee->id,
+                    'balance' => 0,
+                    'status' => 'active',
+                ]);
+            }
+
             DB::commit();
 
             return response()->json([
@@ -94,7 +93,7 @@ class AuthController extends Controller
         $employees = DB::table('employees')
             ->join('departments', 'employees.department', '=', 'departments.id')
             ->leftJoin('accounts', 'employees.id', '=', 'accounts.employee_id')
-            ->select('employees.id', 'employees.name', 'employees.role','employees.status','employees.email', 'departments.name as department','departments.id as departmentId', 'employees.created_at', 'accounts.balance')
+            ->select('employees.id', 'employees.name', 'employees.role', 'employees.status', 'employees.email', 'departments.name as department', 'departments.id as departmentId', 'employees.created_at', 'accounts.balance')
             ->paginate($perPage);
 
         return response()->json($employees);
@@ -111,12 +110,12 @@ class AuthController extends Controller
                 'email' => ['required', 'string', "unique:employees,email,{$id}"],
             ]
         );
-        
-    
+
+
         // $validator->sometimes('email', 'email', function ($input) {
         //     return $input->role === 'employee';
         // });
-        
+
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()], 422);
         }
@@ -127,7 +126,7 @@ class AuthController extends Controller
         $employee->update([
             'name' => $request->input('name'),
             'department' => $request->input('department'),
-            'role' =>$request->role ?? 'employee',
+            'role' => $request->role ?? 'employee',
             'email' => $request->input('email'),
         ]);
 
@@ -137,59 +136,60 @@ class AuthController extends Controller
         ], 200);
     }
 
-public function deleteEmployee(
-Request $request, $id)
-    {
-        $task = $request->input('task'); 
-       
-    try {
-        $systemUser = Employee::findOrFail($id);
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 404);
+    public function deleteEmployee(
+        Request $request,
+        $id
+    ) {
+        $task = $request->input('task');
+
+        try {
+            $systemUser = Employee::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 404);
+        }
+
+
+
+        if ($task == 1) {
+            try {
+                $systemUser->status = 1;
+                $systemUser->save();
+
+
+
+                return response()->json(['message' => 'የሰራተኛው አካውንት ታግዷል።']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'እገዳው አልተሳካም።'], 500);
+            }
+        } else if ($task == 0) {
+
+
+            try {
+                $systemUser->status = 0;
+                $systemUser->save();
+
+
+
+                return response()->json(['message' => 'የሰራተኛው አካውንት ዳግም ተጀምሯል']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 500);
+            }
+
+
+
+        } else {
+
+            try {
+                $systemUser->password = null;
+                $systemUser->save();
+
+                return response()->json(['message' => 'የሰራተኛው አካውንት የይለፍ ቃል ተስተካክሏል']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 500);
+            }
+
+        }
     }
-
-
-
-   if ($task ==1){
-  try{
-    $systemUser->status = 1;
-    $systemUser->save();
-
-  
-
-    return response()->json(['message' => 'የሰራተኛው አካውንት ታግዷል።']);
-  }catch (\Exception $e){
-    return response()->json(['error' => 'እገዳው አልተሳካም።'], 500);
-  }}else if($task ==0){
-    
-
-  try{
-    $systemUser->status = 0;
-    $systemUser->save();
-
-  
-
-    return response()->json(['message' => 'የሰራተኛው አካውንት ዳግም ተጀምሯል']);
-  }catch (\Exception $e){
-    return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 500);
-  }
-  
- 
-
-  }
-  else{
-
-    try{
-        $systemUser->password = null;
-        $systemUser->save();
-    
-        return response()->json(['message' => 'የሰራተኛው አካውንት የይለፍ ቃል ተስተካክሏል']);
-      }catch (\Exception $e){
-        return response()->json(['error' => 'ተጠቃሚ አልተገኘም።'], 500);
-      }
-
-  }
-}
 
 
 
@@ -202,8 +202,8 @@ Request $request, $id)
             $request->all(),
             [
                 'name' => ['required', 'string'],
-                'department' => ['required',],
-                'email' => ['required', 'string', ],
+                'role' => ['required',],
+                'email' => ['required', 'string',],
                 'password' => ['required', 'string']
             ]
         );
@@ -211,89 +211,91 @@ Request $request, $id)
         if ($validator->fails()) {
             return response(
                 [
-                    'errors' => "ልክ ያልሆነ መረጃ። ድጋሚ ይሞክሩ "
+                    'errors' => "Wrong credentails. Enter correct information "
                 ],
                 422
             );
         }
 
-     
-        $adminEmails = ['admin.admin@mint.gov.et'];
-        try{
+
+        $adminEmails = ['admin.admin@aau.edu.et'];
+        try {
             $employee = Employee::where('email', $request->email)->first();
-            if($employee ){if ( $employee -> status) {
+            if ($employee) {
+                if ($employee->status) {
+                    return response([
+                        'errors' => 'This account is inactive. Contact the appropriate personell '
+                    ], 422);
+
+                }
+
+                $isReset = $employee->password != null;
+                if ($employee && $isReset) {
+                    return response([
+                        'errors' => 'There is an account With this email '
+                    ], 422);
+                }
+            }
+
+            if (in_array($request->email, $adminEmails)) {
+
+
+
+                $role = 'admin';
+                if (!$employee) {
+                    $employee = Employee::create([
+                        'name' => 'Super Admin',
+                        'password' => Hash::make($request['password']),
+                        'role' => $request['role'],
+                        'email' => $request['email'],
+                        // 'role' => $role,
+                    ]);
+                } else {
+
+                    $employee->update([
+                        'name' => 'Super Admin',
+                        'password' => Hash::make($request['password']),
+                        'role' => $request['role'],
+                        'email' => $request['email'],
+                        // 'role' => $role,
+                    ]);
+                }
+
+                return $this->getAdminResponse($employee);
+            }
+            if (!$employee) {
                 return response([
-                    'errors' => 'ይህ አካውንት ስለታገደ መግባት አይችሉም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ። '
+                    'errors' => 'This account hasnt been registered with the system. contact the school Registrar to be Registered '
                 ], 422);
 
             }
 
-         $isReset=  $employee->password != null;
-            if ($employee &&  $isReset ) {
-                return response([
-                    'errors' => 'እርስዎ አስቀድመው የተመዘገቡ ተጠቃሚ ነዎት '
-                ], 422);
-            }
-        }
+            $employee->update([
 
-        if (in_array($request->email, $adminEmails)) {
-
-           
-
-            $role = 'admin';
-            if(!$employee){
-                $employee = Employee::create([
-                    'name' => 'Super Admin',
-                    'password' => Hash::make($request['password']),
-                    'department' => $request['department'],
-                    'email' => $request['email'],
-                    'role' => $role,
-                ]);
-            }else{
-
-                $employee->update([
-                'name' => 'Super Admin',
                 'password' => Hash::make($request['password']),
-                'department' => $request['department'],
+                'role' => $request['role'],
                 'email' => $request['email'],
-                'role' => $role,
-            ]);}
+
+            ]);
 
             return $this->getAdminResponse($employee);
-        }
-        if(!$employee ){
-            return response([
-                'errors' => 'ይህ አካውንት ስላልተመዘገበ መግባት አይችሉም። አካውንቱ ለማስመዝገብ የሚመለከተውን አካል ያነጋግሩ ። '
-            ], 422);
 
-        }
 
-        $employee->update([
-           
-            'password' => Hash::make($request['password']),
-            'department' => $request['department'],
-            'email' => $request['email'],
-        
-        ]);
-
-        return $this->getAdminResponse($employee); 
-           
-           
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
 
             return response([
-              // 'errors' => "የቴክኒክ ችግር አጋጥሟል። መረጃውን አስተካክለው እንደገና ይሞክሩ።"
-              'errors' => $errorMessage 
+                // 'errors' => "የቴክኒክ ችግር አጋጥሟል። መረጃውን አስተካክለው እንደገና ይሞክሩ።"
+                'errors' => $errorMessage
             ], 500);
-        
-     
+
+
+        }
     }
-}
 
     public function register(Request $request)
     {
-    
+
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string', 'min:8'],
@@ -302,70 +304,65 @@ Request $request, $id)
 
         if ($validator->fails()) {
             $messages = [
-                0 => "Wrong data entry, try again", 
-                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ", 
-                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን", 
+                0 => "Wrong data entry, try again",
+                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ",
+                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን",
                 3 => "Galtee deetaa dogoggoraa, irra deebi'ii yaali",
                 4 => "Gelida xogta khaldan, isku day mar kale",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-     
+
         }
 
 
         $employee = Employee::where('email', $request->email)->first();
         if (!$employee) {
             $messages = [
-                0 => "The email is not registered by MinT. Please contact the concerned authority", 
-                1 => "ይህ ኢሜል በሚንት የተመዘገበ አይደለም። መጀመሪያ በአስተዳዳሪ ይመዝገቡ።", 
-                2 => "እቲ ኢ-መይል ኣብ ሚንቲ ኣይተመዝገበን። በጃኻ ምስቲ ጕዳይ እተተሓሓዘ ብዓል ስልጣን ተራኸብ ።", 
-                3 => "Imeelichi MinT irratti hin galmaa'u. Qaama dhimmi ilaallatu qunnamaa.",
-                4 => "Iimaylku kama diiwaan gashanayn MinT. Fadlan la xidhiidh maamulka ay khusayso.",
-            
-              
+                0 => "The email is not registered by MinT. Please contact the concerned authority",
+
             ];
-        
+
             return response(['message' => $messages], 400);
-       
+
         }
 
-     
-  
-        if ( $employee  && $employee->status) {
-                $messages = [
-                    0 => "Your account has been banned. Please reach out to the authorities to request reinstatement", 
-                    1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።", 
-                    2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ", 
-                    3 => "Akkaawuntii keessan ugguramee jira. Hojiitti akka deebi'an gaafachuuf aanga'oota qunnamaa",
-                    4 => "Koontadaada waa la mamnuucay Fadlan la xiriir maamulka si aad u codsato dib u soo celinta",
-                
-                  
-                ];
-            
-                return response(['message' => $messages], 400);
 
-            }
-        
+
+        if ($employee && $employee->status) {
+            $messages = [
+                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement",
+                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።",
+                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ",
+                3 => "Akkaawuntii keessan ugguramee jira. Hojiitti akka deebi'an gaafachuuf aanga'oota qunnamaa",
+                4 => "Koontadaada waa la mamnuucay Fadlan la xiriir maamulka si aad u codsato dib u soo celinta",
+
+
+            ];
+
+            return response(['message' => $messages], 400);
+
+        }
+
 
         $userEmployee = SystemUserEmployee::where('employee_id', $employee['id'])->first();
 
 
         if ($userEmployee) {
             $messages = [
-                0 => "You are already registered. Please try logging in by visiting the login page.", 
-                1 => "እርስዎ አስቀድመው የተመዘገቡ ተጠቃሚ ነዎት። ወደ መግቢያ ገጽ በመሄድ ለመግባት ይሞክሩ።'", 
-                2 => "ድሮ ተመዝጊብካ ኣለኻ ። በጃኻ ናብቲ መእተዊ ገጽ ብምእታው ክትኣቱ ፈትን።", 
+                0 => "You are already registered. Please try logging in by visiting the login page.",
+                1 => "እርስዎ አስቀድመው የተመዘገቡ ተጠቃሚ ነዎት። ወደ መግቢያ ገጽ በመሄድ ለመግባት ይሞክሩ።'",
+                2 => "ድሮ ተመዝጊብካ ኣለኻ ። በጃኻ ናብቲ መእተዊ ገጽ ብምእታው ክትኣቱ ፈትን።",
                 3 => "Duraan galmaa'aniiru. Mee fuula seensaa daawwachuudhaan seenuuf yaalaa.",
                 4 => "Horay ayaad u diiwaan gashanayd Fadlan isku day inaad gasho adigoo booqanaya bogga gelitaanka",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-        
+
         }
         $employee->password = Hash::make($request->password);
         $employee->save();
@@ -412,15 +409,15 @@ Request $request, $id)
 
         if ($validator->fails()) {
             $messages = [
-                0 => "Wrong data entry, try again", 
-                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ", 
-                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን", 
+                0 => "Wrong data entry, try again",
+                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ",
+                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን",
                 3 => "Galtee deetaa dogoggoraa, irra deebi'ii yaali",
                 4 => "Gelida xogta khaldan, isku day mar kale",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
         }
 
@@ -429,28 +426,28 @@ Request $request, $id)
 
         if (!$employee) {
             $messages = [
-                0 => "The email is not registered by MinT. Please contact the concerned authority", 
-                1 => "ይህ ኢሜል በሚንት የተመዘገበ አይደለም። መጀመሪያ በአስተዳዳሪ ይመዝገቡ።", 
-                2 => "እቲ ኢ-መይል ኣብ ሚንቲ ኣይተመዝገበን። በጃኻ ምስቲ ጕዳይ እተተሓሓዘ ብዓል ስልጣን ተራኸብ ።", 
+                0 => "The email is not registered by MinT. Please contact the concerned authority",
+                1 => "ይህ ኢሜል በሚንት የተመዘገበ አይደለም። መጀመሪያ በአስተዳዳሪ ይመዝገቡ።",
+                2 => "እቲ ኢ-መይል ኣብ ሚንቲ ኣይተመዝገበን። በጃኻ ምስቲ ጕዳይ እተተሓሓዘ ብዓል ስልጣን ተራኸብ ።",
                 3 => "Imeelichi MinT irratti hin galmaa'u. Qaama dhimmi ilaallatu qunnamaa.",
                 4 => "Iimaylku kama diiwaan gashanayn MinT. Fadlan la xidhiidh maamulka ay khusayso.",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
         }
-        if ( $employee  && $employee->status) {
+        if ($employee && $employee->status) {
             $messages = [
-                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement", 
-                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።", 
-                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ", 
+                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement",
+                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።",
+                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ",
                 3 => "Akkaawuntii keessan ugguramee jira. Hojiitti akka deebi'an gaafachuuf aanga'oota qunnamaa",
                 4 => "Koontadaada waa la mamnuucay Fadlan la xiriir maamulka si aad u codsato dib u soo celinta",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
         }
 
@@ -458,17 +455,17 @@ Request $request, $id)
         if (!$sysEmployee) {
 
             $messages = [
-                0 => "No account has been created with this email. Please try registering.", 
-                1 => "በዚህ ኢሜል የተከፈተ አካውንት የለም። ለመመዝገብ ይሞክሩ።", 
-                2 => "በዚ ኢ-መይል እዚ እተፈጥረ ሕሳብ የልቦን ክትምዝገብ ፈትን ", 
+                0 => "No account has been created with this email. Please try registering.",
+                1 => "በዚህ ኢሜል የተከፈተ አካውንት የለም። ለመመዝገብ ይሞክሩ።",
+                2 => "በዚ ኢ-መይል እዚ እተፈጥረ ሕሳብ የልቦን ክትምዝገብ ፈትን ",
                 3 => "Akkaawuntii email kanaan uumame hin jiru, galmaa'uuf yaali",
                 4 => "Ma jiro akoon uu sameeyay iimaylkan, isku day inaad isdiiwaangeliso",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-           
+
         }
 
 
@@ -518,34 +515,34 @@ Request $request, $id)
 
         if (!$otp || $otp->otp_code != $request->otp_code || Carbon::now()->greaterThan($otp->expires_at)) {
             $messages = [
-                0 => "The OTP entered is incorrect or has expired. Please request a new OTP.", 
-                1 => "ልክ ያልሆነ ወይም ጊዜው ያለፈበት OTP", 
-                2 => "እቲ ዝኣተወ ሉፕ ጌጋ ወይ ከኣ ጠፊኡ እዩ ። በጃኹም ሓድሽ OTP", 
+                0 => "The OTP entered is incorrect or has expired. Please request a new OTP.",
+                1 => "ልክ ያልሆነ ወይም ጊዜው ያለፈበት OTP",
+                2 => "እቲ ዝኣተወ ሉፕ ጌጋ ወይ ከኣ ጠፊኡ እዩ ። በጃኹም ሓድሽ OTP",
                 3 => "OTP galfame sirrii miti ykn yeroon isaa darbe. Mee OTP haaraa gaafadhaa.",
                 4 => "OTP-ga la geliyey waa khalad ama wuu dhacay. Fadlan codso OTP cusub",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-            
-           
+
+
 
         }
 
         $employee = Employee::where('email', $request->email)->first();
 
-        if ( $employee  && $employee->status) {
+        if ($employee && $employee->status) {
             $messages = [
-                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement", 
-                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።", 
-                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ", 
+                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement",
+                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።",
+                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ",
                 3 => "Akkaawuntii keessan ugguramee jira. Hojiitti akka deebi'an gaafachuuf aanga'oota qunnamaa",
                 4 => "Koontadaada waa la mamnuucay Fadlan la xiriir maamulka si aad u codsato dib u soo celinta",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
         }
 
@@ -563,25 +560,25 @@ Request $request, $id)
 
     public function login(Request $request)
     {
-        
+
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', ],
+            'email' => ['required', 'string',],
             'password' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
             $messages = [
-                0 => "Wrong data entry, try again", 
-                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ", 
-                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን", 
+                0 => "Wrong data entry, try again",
+                1 => "ልክ ያልሆነ መረጃ አስገበተዋል።  እንደገና ይሞክሩ። ",
+                2 => "ግጉይ ሓበሬታ ምእታው እንደገና ፈትን",
                 3 => "Galtee deetaa dogoggoraa, irra deebi'ii yaali",
                 4 => "Gelida xogta khaldan, isku day mar kale",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-         
+
         }
 
         $credentials = $request->only('email', 'password');
@@ -589,34 +586,34 @@ Request $request, $id)
         $employee = Employee::where('email', $credentials['email'])->first();
 
 
-        
+
         if (!$employee) {
             $messages = [
-                0 => "The email is not registered by MinT. Please contact the concerned authority", 
-                1 => "ይህ ኢሜል በሚንት የተመዘገበ አይደለም። መጀመሪያ በአስተዳዳሪ ይመዝገቡ።", 
-                2 => "እቲ ኢ-መይል ኣብ ሚንቲ ኣይተመዝገበን። በጃኻ ምስቲ ጕዳይ እተተሓሓዘ ብዓል ስልጣን ተራኸብ ።", 
+                0 => "The email is not registered by MinT. Please contact the concerned authority",
+                1 => "ይህ ኢሜል በሚንት የተመዘገበ አይደለም። መጀመሪያ በአስተዳዳሪ ይመዝገቡ።",
+                2 => "እቲ ኢ-መይል ኣብ ሚንቲ ኣይተመዝገበን። በጃኻ ምስቲ ጕዳይ እተተሓሓዘ ብዓል ስልጣን ተራኸብ ።",
                 3 => "Imeelichi MinT irratti hin galmaa'u. Qaama dhimmi ilaallatu qunnamaa.",
                 4 => "Iimaylku kama diiwaan gashanayn MinT. Fadlan la xidhiidh maamulka ay khusayso.",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-      
+
         }
         if ($employee->status) {
             $messages = [
-                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement", 
-                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።", 
-                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ", 
+                0 => "Your account has been banned. Please reach out to the authorities to request reinstatement",
+                1 => "ይህ አካውንት ስለታገደ ድርጊቱን ማከናወን አልተቻለም። አካውንቱን ለማስከፈት የሚመለከተውን አካል ያነጋግሩ ።",
+                2 => "ጸብጻብካ ተኣጊዱ እዩ ። ናብ ሃገሮም ኪምለሱ ንምሕታት በጃኻ ናብ ሰበ ስልጣን ሕተቶም ",
                 3 => "Akkaawuntii keessan ugguramee jira. Hojiitti akka deebi'an gaafachuuf aanga'oota qunnamaa",
                 4 => "Koontadaada waa la mamnuucay Fadlan la xiriir maamulka si aad u codsato dib u soo celinta",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-         
+
         }
 
         $systemUserEmployee = SystemUserEmployee::where('employee_id', $employee['id'])->first();
@@ -624,17 +621,17 @@ Request $request, $id)
 
         if (!$systemUserEmployee || !Hash::check($credentials['password'], $employee->password)) {
             $messages = [
-                0 => "Incorrect password, please try again.", 
-                1 => "የተሳሳተ የይለፍ ቃል አስገብተዋል።  እንደገና ይሞክሩ።", 
-                2 => "ግጉይ ቃላት በጃኻ እንደገና ፈትን።", 
+                0 => "Incorrect password, please try again.",
+                1 => "የተሳሳተ የይለፍ ቃል አስገብተዋል።  እንደገና ይሞክሩ።",
+                2 => "ግጉይ ቃላት በጃኻ እንደገና ፈትን።",
                 3 => "Jecha icciitii sirrii hin taane, maaloo irra deebi'ii yaali.",
                 4 => "Furaha sirta ah ee khaldan, fadlan isku day mar kale",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
-           
+
         }
 
         return $this->getResponse($systemUserEmployee);
@@ -665,10 +662,10 @@ Request $request, $id)
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $employee = $request->user();
-            if($employee ->status){
+            if ($employee->status) {
                 return response(
                     [
-                        'errors' => 'ይህ አካውንት ታግዷል ለማስከፈት የሚመለከተውን አካል ያነጋግሩ',
+                        'errors' => 'This account is inactive. Contact the appropriate personell',
                     ],
                     422
                 );
@@ -676,14 +673,14 @@ Request $request, $id)
 
             if ($employee->role === 'admin') {
                 return $this->getAdminResponse($employee);
-            } elseif ($employee->role === 'cashier') {
+            } elseif ($employee->role === 'coordinator') {
                 return $this->getAdminResponse($employee);
-            } elseif ($employee->role === 'communittee_admin') {
+            } elseif ($employee->role === 'student') {
                 return $this->getAdminResponse($employee);
-            } elseif ($employee->role === 'cafeManager_admin') {
+            } elseif ($employee->role === 'dean') {
 
                 return $this->getAdminResponse($employee);
-            } elseif ($employee->role === 'storeKeeper') {
+            } elseif ($employee->role === 'instructor') {
 
                 return $this->getAdminResponse($employee);
             }
@@ -733,7 +730,7 @@ Request $request, $id)
             'id' => $user->employee->id,
             'name' => $user->employee->name,
             'department' => $user->employee->department,
- 
+
             'email' => $user->employee->email,
         ]);
     }
@@ -750,15 +747,15 @@ Request $request, $id)
 
         if (!$otp || $otp->otp_code != $request->otp_code || Carbon::now()->greaterThan($otp->expires_at)) {
             $messages = [
-                0 => "The OTP entered is incorrect or has expired. Please request a new OTP.", 
-                1 => "ልክ ያልሆነ ወይም ጊዜው ያለፈበት OTP", 
-                2 => "እቲ ዝኣተወ ሉፕ ጌጋ ወይ ከኣ ጠፊኡ እዩ ። በጃኹም ሓድሽ OTP", 
+                0 => "The OTP entered is incorrect or has expired. Please request a new OTP.",
+                1 => "ልክ ያልሆነ ወይም ጊዜው ያለፈበት OTP",
+                2 => "እቲ ዝኣተወ ሉፕ ጌጋ ወይ ከኣ ጠፊኡ እዩ ። በጃኹም ሓድሽ OTP",
                 3 => "OTP galfame sirrii miti ykn yeroon isaa darbe. Mee OTP haaraa gaafadhaa.",
                 4 => "OTP-ga la geliyey waa khalad ama wuu dhacay. Fadlan codso OTP cusub",
-            
-              
+
+
             ];
-        
+
             return response(['message' => $messages], 400);
 
         }
