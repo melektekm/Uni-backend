@@ -11,7 +11,7 @@ class Employee extends Authenticatable
 {
     use HasFactory, HasApiTokens, Notifiable;
 
-    protected $fillable = ['id','name', 'department', 'email', 'role', 'password','status'];
+    protected $fillable = ['id', 'name', 'role', 'email', 'password', 'status'];
 
     protected $table = 'employees';
     protected $primaryKey = 'id';
@@ -26,7 +26,7 @@ class Employee extends Authenticatable
 
     public function isAdmin()
     {
-        return ($this->role === 'admin' || $this->role === 'cashier'|| $this->role ==='storeKeeper' || $this->role === 'communittee_admin' || $this->role === 'cafeManager_admin' );
+        return ($this->role === 'admin' || $this->role === 'cashier' || $this->role === 'storeKeeper' || $this->role === 'communittee_admin' || $this->role === 'cafeManager_admin');
     }
 
     public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -36,7 +36,7 @@ class Employee extends Authenticatable
 
     public function guestOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(GuestOrder::class,'buyer_id');
+        return $this->hasMany(GuestOrder::class, 'buyer_id');
     }
 
     public function searchEmployeeByNameM($query, $term)
@@ -45,9 +45,9 @@ class Employee extends Authenticatable
         return $query->whereRaw("SOUNDEX(name) = SOUNDEX(?)", [$term]);
     }
     public function department()
-{
-    return $this->belongsTo(Department::class, 'department');
-}
+    {
+        return $this->belongsTo(Department::class, 'department');
+    }
 
     public function account()
     {
