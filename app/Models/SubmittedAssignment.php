@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubmittedAssignment extends Model
 {
+    use HasFactory;
     protected $table = 'submitted_assignments'; // Table name in the database
     protected $primaryKey = 'id'; // Primary key column in the table
-    protected $fillable = [];
+    protected $fillable = ['assignment_id', 'student_id', 'file','status'];
 
     // Define any relationships with other models, if applicable
     public function assignment(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -210,7 +210,23 @@ class AuthController extends Controller
             'employee' => $employee->refresh(),
         ], 200);
     }
+    public function fetchStudents()
+    {
+        try {
+            $students = Student::all();
 
+            return response()->json([
+                'status' => 'success',
+                'students' => $students,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch students.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function deleteEmployee(
         Request $request,
         $id

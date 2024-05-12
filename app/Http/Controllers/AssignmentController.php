@@ -40,15 +40,15 @@ class AssignmentController extends Controller
 
     public function studentUploadAssignment(Request $request)
     {
-        $request->validate([
-            'assignment_id' => 'required|exists:_assignments,id',
+        $validator = Validator::make($request->all(), [
+            'assignment_id' => 'required|exists:_assignment,id',
             'student_id' => 'required|exists:students,student_id',
             'file' => 'nullable|file|mimes:docx,pdf',
         ]);
 
-        if ($request->fails()) {
+        if ($validator->fails()) {
             return response([
-                'errors' => $request->errors()
+                'errors' => $validator->errors()
             ], 422);
         }
 
@@ -68,7 +68,8 @@ class AssignmentController extends Controller
 
         // Update the assignment status to "submitted" for the current student
         $student = Auth::user();
-        $assignment->students()->syncWithoutDetaching([$student->student_id => ['status' => 'submitted']]);
+        $statusId = SubmittedAssignment::where('status', 'submitted')->value('id');
+        $assignment->students()->syncWithoutDetaching([$student->student_id => ['status' => $statusId]]);
 
         $submission = SubmittedAssignment::create([
             'assignment_id' => $assignment->id,
@@ -81,5 +82,4 @@ class AssignmentController extends Controller
             'submission' => $submission,
         ], 200);
     }
-
 }

@@ -13,7 +13,20 @@ class SubmittedAssignments extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('submitted_assignments', function (Blueprint $table) {
+
+            $table->id();
+            $table->unsignedBigInteger('student_id');
+            $table->string('file_path')->nullable();
+            $table->unsignedBigInteger('assignment_id');
+            $table->string('status')->default('unsubmitted');
+            $table->timestamps();
+        });
+        Schema::table('subitted_assignments', function (Blueprint $table) {
+            $table->foreign('id')->references('id')->on('_assignment')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+        });
+
     }
 
     /**
@@ -23,6 +36,7 @@ class SubmittedAssignments extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('subitted_assignments');
+
     }
 }

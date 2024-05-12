@@ -45,6 +45,7 @@ Route::prefix('auth')->group(
 
             Route::post('/addEmployee', [AuthController::class, 'addEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::get('/getEmployee', [AuthController::class, 'getEmployee'])->middleware(['auth:sanctum', 'admin']);
+            Route::get('/fetchStudents', [AuthController::class, 'fetchStudents'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/updateEmployee/{id}', [AuthController::class, 'updateEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/resetEmployeePassword/{id}', [AuthController::class, 'resetEmployeePassword'])->middleware(['auth:sanctum', 'admin']);
@@ -170,7 +171,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
-    Route::get('/submit-assignment', [AssignmentController::class, 'studentUploadAssignment']);
+    Route::post('submit-assignment', [AssignmentController::class, 'studentUploadAssignment']);
     // Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
 
 

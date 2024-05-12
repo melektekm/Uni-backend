@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Student;
 
 class Assignment extends Model
 {
@@ -18,4 +19,9 @@ class Assignment extends Model
         'file_path',
         'status',
     ];
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'submitted_assignments', 'assignment_id', 'student_id')
+            ->withPivot('status');
+    }
 }
