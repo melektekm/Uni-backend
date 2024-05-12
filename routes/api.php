@@ -10,8 +10,9 @@ use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\GuestOrderController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\InventoryRequestController;
-use App\Http\Controllers\stockRequestController;
+use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -44,11 +45,14 @@ Route::prefix('auth')->group(
 
             Route::post('/addEmployee', [AuthController::class, 'addEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::get('/getEmployee', [AuthController::class, 'getEmployee'])->middleware(['auth:sanctum', 'admin']);
+            Route::get('/fetchStudents', [AuthController::class, 'fetchStudents'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/updateEmployee/{id}', [AuthController::class, 'updateEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/resetEmployeePassword/{id}', [AuthController::class, 'resetEmployeePassword'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/register', [AuthController::class, 'registerAdmin']);
             Route::post('/login', [AuthController::class, 'loginAdmin']);
+
+            Route::post('/upload-course', [AuthController::class, 'courseUpload'])->middleware(['auth:sanctum', 'admin']);
         }
         );
         Route::post('/register', [AuthController::class, 'register']);
@@ -131,7 +135,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/guestOrder', [GuestOrderController::class, 'placeOrder']);
     Route::post('/guestOrderElectronic', [GuestOrderController::class, 'placeOrderElectronic']);
     Route::get('/getGuestOrders', [GuestOrderController::class, 'getAllOrders']);
-       Route::get('/guestOrders/{employee}', [GuestOrderController::class, 'getGuestOrdersByEmployee']);
+    Route::get('/guestOrders/{employee}', [GuestOrderController::class, 'getGuestOrdersByEmployee']);
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/placeDepartmentOrder', [DepartmentOrderController::class, 'placeOrder']);
@@ -156,9 +160,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::post('/stockrequest', [StockRequestController::class, 'createStockList'])->middleware('admin');
-    Route::get('/requestfetch', [StockRequestController::class, 'getStockRequests'])->middleware('admin');
-    Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
+    Route::post('/upload-course', [CourseController::class, 'courseUpload']);
+    // Route::get('/requestfetch', [StockRequestController::class, 'getStockRequests'])->middleware('admin');
+    // Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
+
+
+});
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::post('/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
+    Route::post('submit-assignment', [AssignmentController::class, 'studentUploadAssignment']);
+    // Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
 
 
 });
