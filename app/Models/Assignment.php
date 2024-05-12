@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Assignment extends Model
 {
     use HasFactory;
-    protected $table = 'assignments';
-
+    protected $table = '_assignment';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'course_code',
+        'course_id',
         'ass_name',
         'ass_description',
         'due_date',

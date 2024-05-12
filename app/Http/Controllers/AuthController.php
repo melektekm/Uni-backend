@@ -6,6 +6,7 @@ use App\Mail\OtpMail;
 use App\Models\Account;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Student;
 use App\Models\SystemUserEmployee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +24,65 @@ class AuthController extends Controller
         return response('unauthenticated', 401);
     }
 
+    // public function addEmployee(Request $request)
+    // {
+    //     $validator = Validator::make(
+    //         $request->all(),
+    //         [
+    //             'name' => ['required', 'string'],
+    //             'role' => ['required'],
+    //             'email' => ['required', 'string', 'unique:employees'],
+    //             //make the email to account or user
+    //         ]
+    //     );
+
+
+    //     $validator->sometimes('email', 'email', function ($input) {
+    //         return $input->role === 'employee';
+    //     });
+
+    //     if ($validator->fails()) {
+    //         return response(['errors' => $validator->errors()], 422);
+    //     }
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         $employee = Employee::create([
+    //             'name' => $request->name,
+    //             'email' => $request->email,
+    //             'role' => $request->role ?? 'employee',
+    //             'password' => null,
+    //         ]);
+    //         if ($request->role == "employee") {
+
+
+    //             Account::create([
+    //                 'employee_id' => $employee->id,
+    //                 'balance' => 0,
+    //                 'status' => 'active',
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'ሰራተኛ በተሳካ ሁኔታ ገብቷል።',
+    //             'employee' => $employee,
+    //         ], 200);
+    //     } catch (\Exception $e) {
+
+    //         DB::rollback();
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'ሰራተኛ ማስገባት አልተሳካም።',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function addEmployee(Request $request)
     {
         $validator = Validator::make(
@@ -31,10 +91,8 @@ class AuthController extends Controller
                 'name' => ['required', 'string'],
                 'role' => ['required'],
                 'email' => ['required', 'string', 'unique:employees'],
-                //make the email to account or user
             ]
         );
-
 
         $validator->sometimes('email', 'email', function ($input) {
             return $input->role === 'employee';
@@ -47,41 +105,58 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
 
-            $employee = Employee::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'role' => $request->role ?? 'employee',
-                'password' => null,
-            ]);
-            if ($request->role == "employee") {
-
-
-                Account::create([
-                    'employee_id' => $employee->id,
-                    'balance' => 0,
-                    'status' => 'active',
+            if ($request->role === 'student') {
+                $student = Student::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    // 'role' => $request->role,
+                    'password' => null,
                 ]);
+
+                // Additional logic specific to students can be added here
+                // For example, you can create a record in the 'students' table
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'user added succesfully',
+                    'student' => $student,
+                ], 200);
+            } else {
+                $employee = Employee::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'role' => $request->role ?? 'employee',
+                    'password' => null,
+                ]);
+
+                if ($request->role == "employee") {
+                    Account::create([
+                        'employee_id' => $employee->id,
+                        'balance' => 0,
+                        'status' => 'active',
+                    ]);
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'user added',
+                    'employee' => $employee,
+                ], 200);
             }
-
-            DB::commit();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'ሰራተኛ በተሳካ ሁኔታ ገብቷል።',
-                'employee' => $employee,
-            ], 200);
         } catch (\Exception $e) {
-
             DB::rollback();
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'ሰራተኛ ማስገባት አልተሳካም።',
+                'message' => 'user not added',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
-
     public function getEmployee(Request $request)
     {
         $request->validate([
