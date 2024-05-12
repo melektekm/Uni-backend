@@ -22,9 +22,9 @@ class SubmittedAssignments extends Migration
             $table->string('status')->default('unsubmitted');
             $table->timestamps();
         });
-        Schema::table('subitted_assignments', function (Blueprint $table) {
+        Schema::table('submitted_assignments', function (Blueprint $table) {
             $table->foreign('id')->references('id')->on('_assignment')->onDelete('cascade');
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
         });
 
     }
@@ -36,7 +36,7 @@ class SubmittedAssignments extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subitted_assignments');
+        Schema::dropIfExists('submitted_assignments');
 
     }
 }
