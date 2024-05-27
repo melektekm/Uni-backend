@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Announcement extends Model
 {
     use HasFactory;
-    protected $table = 'announcements';
 
     protected $fillable = [
         'title',
         'content',
-        'date',
         'category',
+        'date',
+        'file_path',
     ];
 }

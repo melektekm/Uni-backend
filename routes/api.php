@@ -14,6 +14,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\InventoryRequestController;
 use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AnnouncementController;
 
 
 
@@ -28,9 +29,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+use App\Http\Controllers\ScheduleController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/schedule-requests', [ScheduleController::class, 'index']);
+    Route::post('/schedule-requests', [ScheduleController::class, 'store']);
+    Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
+});
 
 
 
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+    Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+});
 
 
 
