@@ -11,26 +11,20 @@ class CreateCoursesTable extends Migration
      *
      * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('course_code');
+            $table->string('course_code')->unique();
             $table->string('course_name');
             $table->text('course_description');
             $table->integer('credit_hours');
             $table->integer('year');
             $table->integer('semester');
-            // Add more columns as needed
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('courses');
