@@ -16,6 +16,7 @@ use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
 
+use App\Http\Controllers\ScheduleController;
 
 
 /*
@@ -29,7 +30,11 @@ use App\Http\Controllers\AnnouncementController;
 |
 */
 
-use App\Http\Controllers\ScheduleController;
+
+
+
+Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/schedule-requests', [ScheduleController::class, 'index']);

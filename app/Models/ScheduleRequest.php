@@ -20,11 +20,7 @@ class ScheduleRequest extends Model
         'lab_instructor',
         'class_instructor',
         'schedule_type',
-        'requested_by',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(Employee::class, 'requested_by');
-    }
+
 }
