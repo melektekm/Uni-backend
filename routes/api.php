@@ -53,8 +53,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
 });
 
-
-
+Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
 
 
 
