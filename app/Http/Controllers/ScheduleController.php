@@ -25,11 +25,15 @@ class ScheduleController extends Controller
             'labInstructor' => 'required|string|max:255',
             'classInstructor' => 'required|string|max:255',
             'scheduleType' => 'required|in:Exam,Class',
+            'status' => 'nullable|string|max:255',
         ]);
 
         $scheduleRequest = ScheduleRequest::create($data);
 
-        return response()->json($scheduleRequest, 201);
+        return response()->json([
+            'message' => 'Schedule request submitted successfully!',
+            'scheduleRequest' => $scheduleRequest,
+        ], 201);
     }
 
     public function show($id)

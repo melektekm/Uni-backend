@@ -38,4 +38,14 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Course uploaded successfully!', 'course' => $course], 201);
     }
+    public function getCourseName(Request $request, $course_code)
+    {
+        $course = Course::where('course_code', $course_code)->first();
+
+        if (!$course) {
+            return response()->json(['error' => 'Course not found.'], 404);
+        }
+
+        return response()->json(['course_name' => $course->course_name], 200);
+    }
 }

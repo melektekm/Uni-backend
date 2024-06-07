@@ -24,6 +24,7 @@ class CreateScheduleRequestsTable extends Migration
             $table->string('labInstructor');
             $table->string('classInstructor');
             $table->enum('scheduleType', ['Exam', 'Class']);
+            $table->string('status')->default('pending')->after('scheduleType');
             $table->timestamps();
         });
     }
