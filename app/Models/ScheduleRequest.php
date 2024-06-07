@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ScheduleRequest extends Model
 {
     use HasFactory;
-
+    protected $table = 'schedule_requests';
     protected $fillable = [
         'course_name',
         'course_code',
@@ -21,6 +21,8 @@ class ScheduleRequest extends Model
         'class_instructor',
         'schedule_type',
     ];
+
+
 
 
 }

@@ -34,7 +34,7 @@ use App\Http\Controllers\ScheduleController;
 
 
 Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
-
+Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/schedule-requests', [ScheduleController::class, 'index']);
@@ -42,7 +42,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
 });
 
-
+Route::get('/schedule-requests', [ScheduleController::class, 'index']);
+Route::post('/schedule-requests', [ScheduleController::class, 'store']);
+Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
 
 
 
