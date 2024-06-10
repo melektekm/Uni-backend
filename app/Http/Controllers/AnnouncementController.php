@@ -31,20 +31,19 @@ class AnnouncementController extends Controller
             'file_path' => $filePath,
         ]);
 
-        return response()->json(['message' => 'Announcement posted successfully!', 'data' => $announcement], 201);
+        return response()->json([
+            'message' => 'Announcement posted successfully!',
+            'data' => $announcement,
+            'file_url' => $filePath ? Storage::url($filePath) : null,
+        ], 201);
     }
+
     public function index(Request $request)
     {
         $announcements = Announcement::orderBy('created_at', 'desc')->paginate(20);
         return response()->json($announcements);
     }
 
-    /**
-     * Delete an announcement.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
         $announcement = Announcement::find($id);
@@ -57,5 +56,4 @@ class AnnouncementController extends Controller
 
         return response()->json(['message' => 'Announcement deleted successfully'], 200);
     }
-
 }

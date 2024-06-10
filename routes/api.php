@@ -15,7 +15,7 @@ use App\Http\Controllers\InventoryRequestController;
 use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
-
+use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
 
 
@@ -30,8 +30,12 @@ use App\Http\Controllers\ScheduleController;
 |
 */
 
+Route::prefix('teacher')->group(function () {
+    Route::post('upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+});
 
-
+Route::post('/teacher/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
+Route::post('/student/upload-assignment', [AssignmentController::class, 'studentUploadAssignment']);
 
 Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
 Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);

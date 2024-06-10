@@ -4,30 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Models\Assignment;
-use App\Models\SubmittedAssignment;
 use Illuminate\Support\Facades\Validator;
 
 class AssignmentController extends Controller
 {
-
     public function teacherUploadAssignment(Request $request)
     {
-        $validator = $request->validate([
+        // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
             'course_id' => 'required|string',
-            'ass_description' => 'nullable|string',
+            'Add_description' => 'nullable|string',
             'ass_name' => 'required|string',
-            'file' => 'nullable|file|mimes:docx,pdf',
+            'file_path' => 'nullable|file|mimes:pdf|max:4096', // 4MB max size and only PDF files
             'due_date' => 'required|date',
         ]);
 
+        if ($validator->fails()) {
+            return response([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Store the file if it exists
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('public/files');
+        }
+
+        // Create the assignment
         $assignment = Assignment::create([
             'course_id' => $request->input('course_id'),
-            'ass_description' => $request->input('ass_description'),
+            'Add_description' => $request->input('Add_description'),
             'ass_name' => $request->input('ass_name'),
-            'file_path' => $request->hasFile('file') ? $request->file('file')->store('public/files') : null,
-            'due_date' => $request->input('due_date'),
+            'file_path' => $filePath,
+            'due_date' => $request->input('dueDate'),
         ]);
 
         return response([
@@ -36,12 +47,11 @@ class AssignmentController extends Controller
         ], 200);
     }
 
-
-
+    // The studentUploadAssignment method remains unchanged
     public function studentUploadAssignment(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'assignment_id' => 'required|exists:_assignment,id',
+            'assignment_id' => 'required|exists:assignments,id',
             'student_id' => 'required|exists:students,student_id',
             'file' => 'nullable|file|mimes:docx,pdf',
         ]);
@@ -53,7 +63,6 @@ class AssignmentController extends Controller
         }
 
         $filePath = null;
-
         if ($request->hasFile('file')) {
             $filePath = $request->file('file')->store('public/files');
         }
@@ -66,7 +75,6 @@ class AssignmentController extends Controller
             ], 404);
         }
 
-        // Update the assignment status to "submitted" for the current student
         $student = Auth::user();
         $statusId = SubmittedAssignment::where('status', 'submitted')->value('id');
         $assignment->students()->syncWithoutDetaching([$student->student_id => ['status' => $statusId]]);
