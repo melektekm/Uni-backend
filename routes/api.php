@@ -15,7 +15,7 @@ use App\Http\Controllers\InventoryRequestController;
 use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
-
+use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleRequestController;
 
@@ -30,8 +30,12 @@ use App\Http\Controllers\ScheduleRequestController;
 |
 */
 
+Route::prefix('teacher')->group(function () {
+    Route::post('upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+});
 
-
+Route::post('/teacher/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
+Route::post('/student/upload-assignment', [AssignmentController::class, 'studentUploadAssignment']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
