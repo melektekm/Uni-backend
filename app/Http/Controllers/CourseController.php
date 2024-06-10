@@ -48,4 +48,42 @@ class CourseController extends Controller
 
         return response()->json(['course_name' => $course->course_name], 200);
     }
+
+    // public function fetchCourses(Request $request)
+    // {
+    //     $currentPage = $request->input('page', 1);
+    //     $itemsPerPage = 10;
+
+    //     $courses = Course::paginate($itemsPerPage, ['*'], 'page', $currentPage);
+
+    //     return response()->json([
+    //         'courses' => $courses->items(),
+    //         'current_page' => $courses->currentPage(),
+    //         'lastPage' => $courses->lastPage(),
+    //     ]);
+    // }
+
+    public function fetchCourses(Request $request)
+    {
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = 10;
+
+        $query = Course::query();
+
+        if ($request->has('year') && !empty($request->input('year'))) {
+            $query->where('year', $request->input('year'));
+        }
+
+        if ($request->has('semester') && !empty($request->input('semester'))) {
+            $query->where('semester', $request->input('semester'));
+        }
+
+        $courses = $query->paginate($itemsPerPage, ['*'], 'page', $currentPage);
+
+        return response()->json([
+            'courses' => $courses->items(),
+            'current_page' => $courses->currentPage(),
+            'lastPage' => $courses->lastPage(),
+        ]);
+    }
 }

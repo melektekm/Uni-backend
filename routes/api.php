@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScheduleRequestController;
 use App\Http\Controllers\CourseMaterialController;
 
 /*
@@ -44,20 +45,26 @@ Route::prefix('teacher')->group(function () {
 Route::post('/teacher/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
 Route::post('/student/upload-assignment', [AssignmentController::class, 'studentUploadAssignment']);
 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/courses', [CourseController::class, 'fetchCourses']);
+    Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
+});
+
 Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
 Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/schedule-requests', [ScheduleController::class, 'index']);
-    Route::post('/schedule-requests', [ScheduleController::class, 'store']);
-    Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
+    Route::get('/schedule-requests', [ScheduleRequestController::class, 'index']);
+    Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
+    Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
 });
 
-Route::get('/schedule-requests', [ScheduleController::class, 'index']);
-Route::post('/schedule-requests', [ScheduleController::class, 'store']);
-Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
+// Route::get('/schedule-requests', [ScheduleController::class, 'index']);
+// Route::post('/schedule-requests', [ScheduleController::class, 'store']);
+// Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
 
-
+Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
 
 
 Route::middleware(['auth'])->group(function () {

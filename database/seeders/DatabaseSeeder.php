@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             EmployeeSeeder::class,
-            SystemUserEmployeeSeeder::class,
-           IngredientSeeder::class,
-//           MenuItemSeeder::class,
+            CourseSeeder::class,
+            ScheduleRequestSeede::class,
+            //           MenuItemSeeder::class,
 //          OrderSeeder::class,
 //             OrderMenuItemSeeder::class,
 
