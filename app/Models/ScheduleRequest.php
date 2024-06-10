@@ -15,11 +15,12 @@ class ScheduleRequest extends Model
         'course_code',
         'classroom',
         'labroom',
-        'class_days',
-        'lab_days',
-        'lab_instructor',
-        'class_instructor',
-        'schedule_type',
+        'classDays',
+        'labDays',
+        'labInstructor',
+        'classInstructor',
+        'scheduleType',
+        'status',
     ];
 
 
