@@ -9,14 +9,14 @@ use App\Models\Student;
 class Assignment extends Model
 {
     use HasFactory;
-    protected $table = '_assignment';
+    protected $table = 'assignments';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'course_id',
-        'ass_name',
-        'ass_description',
-        'due_date',
-        'file_path',
+        'course_code',
+        'assignmentName',
+        'assignmentDescription',
+        'dueDate',
+        'file',
         'status',
     ];
     public function students()
