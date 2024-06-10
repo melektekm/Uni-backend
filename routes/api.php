@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
-
+use App\Http\Controllers\CourseMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +29,13 @@ use App\Http\Controllers\ScheduleController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
+
+Route::prefix('teacher')->group(function () {
+    Route::post('upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+    // Route::get('get-course-name', [CourseMaterialController::class, 'getCourseName']);
+});
 
 Route::prefix('teacher')->group(function () {
     Route::post('upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
