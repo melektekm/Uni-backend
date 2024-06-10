@@ -30,46 +30,6 @@ use App\Http\Controllers\ScheduleRequestController;
 |
 */
 
-Route::prefix('teacher')->group(function () {
-    Route::post('upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
-});
-
-Route::post('/teacher/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
-Route::post('/student/upload-assignment', [AssignmentController::class, 'studentUploadAssignment']);
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/courses', [CourseController::class, 'fetchCourses']);
-    Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
-});
-
-Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
-Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/schedule-requests', [ScheduleRequestController::class, 'index']);
-    Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
-    Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
-});
-
-// Route::get('/schedule-requests', [ScheduleController::class, 'index']);
-// Route::post('/schedule-requests', [ScheduleController::class, 'store']);
-// Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
-
-Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/post-announcement', [AnnouncementController::class, 'store']);
-    Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
-    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
-});
-
-Route::post('/post-announcement', [AnnouncementController::class, 'store']);
-Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
-Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
-
-
 
 Route::prefix('auth')->group(
     function () {
@@ -105,12 +65,41 @@ Route::get('/updateEmployee/{id}', [AuthController::class, 'updateEmployee']);
 Route::delete('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee']);
 
 
-
-Route::middleware(['auth:sanctum'])->group(function () {
-
-    Route::post('/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
-    Route::post('submit-assignment', [AssignmentController::class, 'studentUploadAssignment']);
-    // Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
-
-
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 });
+Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/courses', [CourseController::class, 'fetchCourses']);
+    Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
+});
+
+Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
+Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/schedule-requests', [ScheduleRequestController::class, 'index']);
+    Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
+    Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
+});
+
+// Route::get('/schedule-requests', [ScheduleController::class, 'index']);
+// Route::post('/schedule-requests', [ScheduleController::class, 'store']);
+// Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
+
+Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+    Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+});
+
+Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+
+

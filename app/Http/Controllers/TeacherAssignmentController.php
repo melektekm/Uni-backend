@@ -5,25 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Assignment;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class TeacherAssignmentController extends Controller
 {
-    public function store(Request $request)
+    public function uploadAssignment(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'course_code' => 'required|string',
             'assignmentName' => 'required|string',
             'assignmentDescription' => 'nullable|string',
             'dueDate' => 'required|date',
             'file' => 'nullable|file|mimes:pdf|max:4096', // Max 4MB PDF file
         ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('public/files');
         }
 
-        $file = $request->file('file');
-        $filePath = $file ? $file->store('public/files') : null;
 
         $assignment = Assignment::create([
             'course_code' => $request->course_code,
@@ -36,6 +35,7 @@ class TeacherAssignmentController extends Controller
         return response()->json([
             'message' => 'Assignment uploaded successfully',
             'assignment' => $assignment,
+            'file_url' => $filePath ? Storage::url($filePath) : null,
         ], 201);
     }
 }
