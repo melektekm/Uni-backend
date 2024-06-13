@@ -67,9 +67,13 @@ Route::delete('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee'])
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+    Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+    Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
 });
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
-
+Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);

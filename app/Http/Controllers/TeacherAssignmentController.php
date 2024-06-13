@@ -38,4 +38,12 @@ class TeacherAssignmentController extends Controller
             'file_url' => $filePath ? Storage::url($filePath) : null,
         ], 201);
     }
+
+    public function getAllAssignments(Request $request)
+    {
+        // Assuming you have a model named Assignment
+        $assignments = Assignment::all();
+
+        return response()->json(['assignments' => $assignments], 200);
+    }
 }
