@@ -12,7 +12,6 @@ class SubmittedAssignment extends Model
     protected $primaryKey = 'id'; // Primary key column in the table
 
     protected $fillable = [
-        'course_code',
         'course_name',
         'assignment_name',
         'student_name',
