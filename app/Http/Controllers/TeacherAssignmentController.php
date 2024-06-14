@@ -19,15 +19,15 @@ class TeacherAssignmentController extends Controller
             'dueDate' => 'required|date',
             'file' => 'nullable|file|mimes:pdf|max:4096', // Max 4MB PDF file
         ]);
+
         $filePath = null;
         if ($request->hasFile('file')) {
             $filePath = $request->file('file')->store('public/files');
         }
 
-
         $assignment = Assignment::create([
             'course_code' => $request->course_code,
-            'course_name' => $request->course_code,
+            'course_name' => $request->course_name, // Fixed to use correct field
             'assignmentName' => $request->assignmentName,
             'assignmentDescription' => $request->assignmentDescription,
             'dueDate' => $request->dueDate,
@@ -40,6 +40,7 @@ class TeacherAssignmentController extends Controller
             'file_url' => $filePath ? Storage::url($filePath) : null,
         ], 201);
     }
+
 
     public function getAllAssignments(Request $request)
     {
