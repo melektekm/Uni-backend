@@ -13,6 +13,7 @@ class Assignment extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'course_code',
+        'course_name',
         'assignmentName',
         'assignmentDescription',
         'dueDate',
