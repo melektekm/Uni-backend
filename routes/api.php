@@ -15,9 +15,10 @@ use App\Http\Controllers\InventoryRequestController;
 use App\Http\Controllers\AssignmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnnouncementController;
-
+use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleRequestController;
+use App\Http\Controllers\CourseMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,42 +30,6 @@ use App\Http\Controllers\ScheduleRequestController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/courses', [CourseController::class, 'fetchCourses']);
-    Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
-});
-
-Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
-Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/schedule-requests', [ScheduleRequestController::class, 'index']);
-    Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
-    Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
-});
-
-// Route::get('/schedule-requests', [ScheduleController::class, 'index']);
-// Route::post('/schedule-requests', [ScheduleController::class, 'store']);
-// Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
-
-Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/post-announcement', [AnnouncementController::class, 'store']);
-    Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
-    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
-});
-
-Route::post('/post-announcement', [AnnouncementController::class, 'store']);
-Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
-Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
-
 
 
 Route::prefix('auth')->group(
@@ -100,13 +65,57 @@ Route::get('/updateEmployee/{id}', [AuthController::class, 'updateEmployee']);
 
 Route::delete('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee']);
 
+Route::post('/submit-assignment', [AssignmentController::class, 'store']);
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::post('/upload-assignment', [AssignmentController::class, 'teacherUploadAssignment']);
-    Route::post('submit-assignment', [AssignmentController::class, 'studentUploadAssignment']);
-    // Route::post('/stockapprove', [StockRequestController::class, 'approve'])->middleware('admin');
-
-
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+    Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+    // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
 });
+Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+// Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/courses', [CourseController::class, 'fetchCourses']);
+    Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
+});
+Route::get('/courses', [CourseController::class, 'fetchCourses']);
+Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
+Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
+Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/schedule-requests', [ScheduleRequestController::class, 'index']);
+    Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
+    Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
+});
+
+// Route::get('/schedule-requests', [ScheduleController::class, 'index']);
+// Route::post('/schedule-requests', [ScheduleController::class, 'store']);
+// Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);
+
+Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+    Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+});
+
+Route::post('/post-announcement', [AnnouncementController::class, 'store']);
+Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
+Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+});
+Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+
+Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
+Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
+// Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
