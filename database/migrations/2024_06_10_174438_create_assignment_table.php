@@ -8,9 +8,10 @@ class CreateAssignmentTable extends Migration
 {
     public function up()
     {
-        Schema::create('assignments', function (Blueprint $table) {
+        Schema::create('assignment', function (Blueprint $table) {
             $table->id();
             $table->string('course_code');
+            $table->string('course_name');
             $table->string('assignmentName');
             $table->text('assignmentDescription')->nullable();
             $table->date('dueDate');
@@ -21,6 +22,6 @@ class CreateAssignmentTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('assignments');
+        Schema::dropIfExists('assignment');
     }
 }

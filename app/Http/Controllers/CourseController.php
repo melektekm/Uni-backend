@@ -78,7 +78,7 @@ class CourseController extends Controller
             $query->where('semester', $request->input('semester'));
         }
 
-        $courses = $query->paginate($itemsPerPage, ['*'], 'page', $currentPage);
+        $courses = $query->selectRaw('courses.*')->paginate($itemsPerPage, ['*'], 'page', $currentPage);
 
         return response()->json([
             'courses' => $courses->items(),

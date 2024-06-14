@@ -10,7 +10,15 @@ class SubmittedAssignment extends Model
     use HasFactory;
     protected $table = 'submitted_assignments'; // Table name in the database
     protected $primaryKey = 'id'; // Primary key column in the table
-    protected $fillable = ['assignment_id', 'student_id', 'file','status'];
+
+    protected $fillable = [
+        'course_code',
+        'course_name',
+        'assignment_name',
+        'student_name',
+        'student_id',
+        'file_path',
+    ];
 
     // Define any relationships with other models, if applicable
     public function assignment(): \Illuminate\Database\Eloquent\Relations\BelongsTo

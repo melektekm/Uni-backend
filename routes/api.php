@@ -64,22 +64,26 @@ Route::get('/updateEmployee/{id}', [AuthController::class, 'updateEmployee']);
 
 Route::delete('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee']);
 
+Route::post('/submit-assignment', [AssignmentController::class, 'store']);
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
     Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
-    Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+    // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
 });
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
-Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+// Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
     Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
 });
-
+Route::get('/courses', [CourseController::class, 'fetchCourses']);
+Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
 Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
 Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
 

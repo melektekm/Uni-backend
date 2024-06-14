@@ -13,6 +13,7 @@ class TeacherAssignmentController extends Controller
     {
         $request->validate([
             'course_code' => 'required|string',
+            'course_name' => 'required|string',
             'assignmentName' => 'required|string',
             'assignmentDescription' => 'nullable|string',
             'dueDate' => 'required|date',
@@ -26,6 +27,7 @@ class TeacherAssignmentController extends Controller
 
         $assignment = Assignment::create([
             'course_code' => $request->course_code,
+            'course_name' => $request->course_code,
             'assignmentName' => $request->assignmentName,
             'assignmentDescription' => $request->assignmentDescription,
             'dueDate' => $request->dueDate,
