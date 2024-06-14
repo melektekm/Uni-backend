@@ -18,6 +18,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleRequestController;
+use App\Http\Controllers\CourseMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,4 +111,11 @@ Route::post('/post-announcement', [AnnouncementController::class, 'store']);
 Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
 Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
 
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+});
+Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
 
+Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
+Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
+// Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
