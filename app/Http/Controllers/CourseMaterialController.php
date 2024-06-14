@@ -4,41 +4,96 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CourseMaterial;
+use Illuminate\Support\Facades\Storage;
 
 class CourseMaterialController extends Controller
-{
+ {
     public function uploadMaterial(Request $request)
-    {
-        // Validate the request
-        $validated = $request->validate([
-            'course_code' => 'required',
-            'material_title' => 'required',
-            'file' => 'required|file|mimes:pdf|max:4096', // Assuming PDF files are accepted up to 4 MB
+{
+    // Validate the request
+    $validated = $request->validate([
+        'course_code' => 'required',
+        'material_title' => 'required',
+        'file' => 'required|file|mimes:pdf|max:4096', // Assuming PDF files are accepted up to 4 MB
+    ]);
+
+    try {
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('public/files');
+        }
+
+        $courseMaterial = CourseMaterial::create([
+            'course_code' => $request->course_code,
+            'material_title' => $request->material_title,
+            'file_path' => $filePath,
         ]);
 
-        // Upload the file
-        $file = $request->file('file');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('uploads', $fileName);
+        return response()->json([
+            'message' => 'Course material uploaded successfully',
+            'material' => $courseMaterial,
+            'file_url' => $filePath ? Storage::url($filePath) : null,
+        ], 201);
+    } catch (\Exception $e) {
+        // Log the error
+        \Log::error('Error uploading course material: ' . $e->getMessage());
 
-        // Save the course material
-        $courseMaterial = new CourseMaterial();
-        $courseMaterial->course_code = $validated['course_code'];
-        $courseMaterial->material_title = $validated['material_title'];
-        $courseMaterial->file_path = $filePath;
-        $courseMaterial->save();
-
-        return response()->json(['message' => 'Course material uploaded successfully']);
+        return response()->json(['error' => 'Failed to upload course material.'], 500);
+    }
+}
+    public function getAllMaterials()
+ {
+        $materials = CourseMaterial::all();
+        // Fetch all materials
+        return response()->json( [ 'materials' => $materials ] );
     }
 
-    public function getCourseName(Request $request)
-    {
-        $courseCode = $request->input('course_code');
+    public function filterMaterials(Request $request)
+{
+    $searchTerm = $request->input('searchTerm');
 
-        // Fetch course name based on course code
-        // Assuming you have the logic to fetch course name from your database
-        $courseName = "Course Name"; // Placeholder for course name
+    $query = CourseMaterial::query();
 
-        return response()->json(['course_name' => $courseName]);
+    // Apply filter based on course name
+    if ($searchTerm) {
+        $query->where('course_name', 'like', '%' . $searchTerm . '%');
     }
+
+    $filteredMaterials = $query->get();
+
+    return response()->json(['filteredMaterials' => $filteredMaterials]);
+}
+
+// public function getMaterialContent($materialId)
+// {
+//     try {
+//         $material = CourseMaterial::findOrFail($materialId); // Assuming Material is a model
+
+//         // Assuming 'file_path' is a field in your material database table storing the file path
+//         $filePath = $material->file_path;
+
+//         // Download the file
+//         return response()->download(storage_path("app/public/{$filePath}"));
+//     } catch (\Exception $e) {
+//         // Log the error for further investigation
+//         \Log::error('Error fetching material content: ' . $e->getMessage());
+
+//         // Return a JSON response with an error message
+//         return response()->json(['error' => 'Failed to fetch material content.'], 500);
+//     }
+// }
+// public function getMaterialContent($materialId)
+// {
+//     try {
+//         $material = CourseMaterial::findOrFail($materialId); // Example: Assuming Material is a model
+
+//         // Assuming 'file_path' is a field in your material database table storing the file path
+//         $filePath = $material->file_path;
+
+//         return response()->download(storage_path("app/public/{$filePath}")); // Download the file
+//     } catch (\Exception $e) {
+//         return response()->json(['error' => 'Failed to fetch material content.'], 500);
+//     }
+// }
+
 }

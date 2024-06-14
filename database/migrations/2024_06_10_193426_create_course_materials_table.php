@@ -16,6 +16,7 @@ class CreateCourseMaterialsTable extends Migration
         Schema::create('course_materials', function (Blueprint $table) {
             $table->id();
             $table->string('course_code');
+            $table->string('course_name');
             $table->string('material_title');
             $table->string('file_path');
             $table->timestamps();

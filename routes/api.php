@@ -72,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
     Route::put('/enroll/{id}', [CourseController::class, 'enroll']);
 });
@@ -103,4 +103,11 @@ Route::post('/post-announcement', [AnnouncementController::class, 'store']);
 Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
 Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
 
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+});
+Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
 
+Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
+Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
+// Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
