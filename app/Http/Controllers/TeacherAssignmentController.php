@@ -76,4 +76,21 @@ class TeacherAssignmentController extends Controller
             ->header('Content-Type', $fileMimeType)
             ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
     }
+
+    public function filterAssignments(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+
+        $query = Assignment::query();
+
+        // Apply filter based on course name
+        if ($searchTerm) {
+            $query->where('course_name', 'like', '%' . $searchTerm . '%');
+        }
+
+        $filteredAssignments = $query->get();
+
+        return response()->json(['filteredAssignments' => $filteredAssignments]);
+    }
+
 }

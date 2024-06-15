@@ -14,6 +14,8 @@ class ScheduleRequestController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('Schedule Request Data:', $request->all());
+
         $request->validate([
             'course_name' => 'required|string|max:255',
             'course_code' => 'required|string|max:255',
@@ -31,6 +33,7 @@ class ScheduleRequestController extends Controller
 
         return response()->json($scheduleRequest, 201);
     }
+
     public function show($id)
     {
         return ScheduleRequest::findOrFail($id);

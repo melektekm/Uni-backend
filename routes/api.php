@@ -80,7 +80,11 @@ Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAs
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
 // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+<<<<<<< HEAD
 Route::get('/getmaterialcontent/{materialId}', [TeacherAssignmentController::class, 'getMaterialContent']);
+=======
+Route::post('/filterassignments', [TeacherAssignmentController::class, 'filterAssignments']);
+>>>>>>> 0bd7fe6384287e8ac70167279b9d3ce44694b247
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
@@ -116,11 +120,15 @@ Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destr
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
+    Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
 });
 Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
 
 Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
 Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
+<<<<<<< HEAD
 // Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
 // routes/web.php or routes/api.php
+=======
+>>>>>>> 0bd7fe6384287e8ac70167279b9d3ce44694b247
 Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
