@@ -49,4 +49,31 @@ class TeacherAssignmentController extends Controller
 
         return response()->json(['assignments' => $assignments], 200);
     }
+    public function getMaterialContent($materialId)
+    {
+        // Fetch the material from the database
+        $material = Assignment::find($materialId);
+
+        if (!$material) {
+            return response()->json(['error' => 'Material not found'], 404);
+        }
+
+        // Assuming the file path is stored in the `file_path` column of the material
+        $filePath = $material->file_path;
+
+        // Check if the file exists in the storage
+        if (!Storage::exists($filePath)) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+
+        // Get the file content
+        $fileContent = Storage::get($filePath);
+        $fileMimeType = Storage::mimeType($filePath);
+        $fileName = basename($filePath);
+
+        // Return the file content as a response
+        return response($fileContent, 200)
+            ->header('Content-Type', $fileMimeType)
+            ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
+    }
 }

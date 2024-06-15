@@ -66,6 +66,8 @@ Route::get('/updateEmployee/{id}', [AuthController::class, 'updateEmployee']);
 Route::delete('/deleteEmployee/{id}', [AuthController::class, 'deleteEmployee']);
 
 Route::post('/submit-assignment', [AssignmentController::class, 'store']);
+Route::get('/getallsubmittedassignments', [AssignmentController::class, 'getAllSubmittedAssignments']);
+Route::get('/getmaterialcontent/{materialId}', [AssignmentController::class, 'getMaterialContent']);
 
 
 
@@ -78,6 +80,7 @@ Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAs
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
 // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+Route::get('/getmaterialcontent/{materialId}', [TeacherAssignmentController::class, 'getMaterialContent']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
@@ -119,3 +122,5 @@ Route::post('/upload-material', [CourseMaterialController::class, 'uploadMateria
 Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
 Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
 // Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
+// routes/web.php or routes/api.php
+Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
