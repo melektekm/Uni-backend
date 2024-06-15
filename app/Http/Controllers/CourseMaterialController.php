@@ -63,20 +63,28 @@ class CourseMaterialController extends Controller
 public function getMaterialContent($materialId)
 {
     try {
+        // Find the material by ID
         $material = CourseMaterial::findOrFail($materialId);
+
+        // Get the file path from the material record
         $filePath = $material->file_path;
 
+        // Log the file path for debugging
+        \Log::info('Requested file path: ' . $filePath);
+
+        // Check if the file exists in the public disk
         if (!Storage::disk('public')->exists($filePath)) {
-            \Log::error('File not found: ' . $filePath);
+            \Log::error('File not found in public disk: ' . $filePath);
             return response()->json(['error' => 'File not found.'], 404);
         }
 
+        // Return the file as a response
         return response()->file(storage_path("app/public/{$filePath}"));
     } catch (\Exception $e) {
-        \Log::error('Error fetching material content: ' . $e->getMessage());
+        // Log the error message with stack trace for detailed debugging
+        \Log::error('Error fetching material content: ' . $e->getMessage(), ['exception' => $e]);
         return response()->json(['error' => 'Failed to fetch material content.'], 500);
     }
 }
-
 
 }

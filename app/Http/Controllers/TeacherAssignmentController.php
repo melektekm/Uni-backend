@@ -49,4 +49,21 @@ class TeacherAssignmentController extends Controller
 
         return response()->json(['assignments' => $assignments], 200);
     }
+
+    public function filterAssignments(Request $request)
+{
+    $searchTerm = $request->input('searchTerm');
+
+    $query = Assignment::query();
+
+    // Apply filter based on course name
+    if ($searchTerm) {
+        $query->where('course_name', 'like', '%' . $searchTerm . '%');
+    }
+
+    $filteredAssignments = $query->get();
+
+    return response()->json(['filteredAssignments' => $filteredAssignments]);
+}
+
 }
