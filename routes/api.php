@@ -78,6 +78,7 @@ Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAs
 Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
 Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
 // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+Route::post('/filterassignments', [TeacherAssignmentController::class, 'filterAssignments']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
