@@ -9,7 +9,7 @@ use App\Models\Student;
 class Assignment extends Model
 {
     use HasFactory;
-    protected $table = 'assignments';
+    protected $table = 'assignment';
     protected $primaryKey = 'id';
     protected $fillable = [
         'course_code',

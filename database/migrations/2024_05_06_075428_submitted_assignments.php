@@ -13,9 +13,9 @@ class SubmittedAssignments extends Migration
      */
     public function up()
     {
-        Schema::create('assignments', function (Blueprint $table) {
+        Schema::create('submitted_assignments', function (Blueprint $table) {
             $table->id();
-            $table->string('course_code');
+
             $table->string('course_name');
             $table->string('assignment_name');
             $table->string('student_name');
@@ -27,6 +27,6 @@ class SubmittedAssignments extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('assignments');
+        Schema::dropIfExists('submitted_assignments');
     }
 }
