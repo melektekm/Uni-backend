@@ -6,34 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateScheduleRequestsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('schedule_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('course_name');
             $table->string('course_code');
+            $table->string('course_name');
             $table->string('classroom');
-            $table->string('labroom');
+            $table->string('labroom')->nullable();
             $table->string('classDays');
-            $table->string('labDays');
-            $table->string('labInstructor');
+            $table->string('labDays')->nullable();
+            $table->string('labInstructor')->nullable();
             $table->string('classInstructor');
-            $table->enum('scheduleType', ['Exam', 'Class']);
-            $table->enum('status', ['Pending', 'Approved'])->default('Pending');
+            $table->enum('schedule_type', ['Exam', 'Class']);
             $table->timestamps();
+
+            $table->foreign('course_code')->references('course_code')->on('courses')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('schedule_requests');

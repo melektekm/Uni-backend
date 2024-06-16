@@ -19,11 +19,13 @@ class ScheduleRequest extends Model
         'labDays',
         'labInstructor',
         'classInstructor',
-        'scheduleType',
-        'status',
+        'schedule_type',
     ];
 
-
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_code', 'course_code');
+    }
 
 
 }
