@@ -11,7 +11,7 @@ class TeacherAssignmentController extends Controller
 {
     public function uploadAssignment(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'course_code' => 'required|string',
             'course_name' => 'required|string',
             'assignmentName' => 'required|string',
@@ -22,7 +22,7 @@ class TeacherAssignmentController extends Controller
 
         $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('public/files');
+            $filePath = $request->file('file')->store('assignment');
         }
 
         $assignment = Assignment::create([
@@ -49,33 +49,31 @@ class TeacherAssignmentController extends Controller
 
         return response()->json(['assignments' => $assignments], 200);
     }
-    public function getMaterialContent($materialId)
-    {
-        // Fetch the material from the database
-        $material = Assignment::find($materialId);
+    // public function getAssignmentContent($assignmentId)
+    // {
 
-        if (!$material) {
-            return response()->json(['error' => 'Material not found'], 404);
-        }
+    //     // Fetch assignment details from the database
+    //     $assignment = Assignment::findOrFail($assignmentId);
 
-        // Assuming the file path is stored in the `file_path` column of the material
-        $filePath = $material->file_path;
+    //     if (!$assignment) {
+    //         return response()->json(['error' => 'Assignment not found'], 404);
+    //     }
 
-        // Check if the file exists in the storage
-        if (!Storage::exists($filePath)) {
-            return response()->json(['error' => 'File not found'], 404);
-        }
+    //     $filePath = $assignment->file_path;
+    //     if (!Storage::exists($filePath)) {
+    //         return response()->json(['error' => 'File not found'], 404);
+    //     }
+    //     // Get the file content
+    //     $fileContent = Storage::get($filePath);
+    //     $fileMimeType = Storage::mimeType($filePath);
+    //     $fileName = basename($filePath);
 
-        // Get the file content
-        $fileContent = Storage::get($filePath);
-        $fileMimeType = Storage::mimeType($filePath);
-        $fileName = basename($filePath);
+    //     // Return the file content as a response
+    //     return response($fileContent, 200)
+    //         ->header('Content-Type', $fileMimeType)
+    //         ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
 
-        // Return the file content as a response
-        return response($fileContent, 200)
-            ->header('Content-Type', $fileMimeType)
-            ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
-    }
+    // }
 
     public function filterAssignments(Request $request)
     {
@@ -93,4 +91,24 @@ class TeacherAssignmentController extends Controller
         return response()->json(['filteredAssignments' => $filteredAssignments]);
     }
 
+    public function getMaterialContent($assignmentId)
+    {
+        try {
+            $assignment = Assignment::findOrFail($assignmentId);
+
+            // Assuming you have a file path stored in the assignment record
+            $filePath = storage_path('app/' . $assignment->file_path);
+
+            // Check if the file exists
+            if (!file_exists($filePath)) {
+                return response()->json(['error' => 'File not found'], 404);
+            }
+
+            // Return the file as a response
+            return response()->file($filePath);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Assignment not found'], 404);
+        }
+    }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleRequestController;
 use App\Http\Controllers\CourseMaterialController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,7 @@ Route::prefix('auth')->group(
             Route::post('/resetEmployeePassword/{id}', [AuthController::class, 'resetEmployeePassword'])->middleware(['auth:sanctum', 'admin']);
             Route::post('/register', [AuthController::class, 'registerAdmin']);
             Route::post('/login', [AuthController::class, 'loginAdmin']);
-
+            Route::get('getAllUsers', [AuthController::class, 'getAllUsers']);
             Route::post('/upload-course', [AuthController::class, 'courseUpload'])->middleware(['auth:sanctum', 'admin']);
         }
         );
@@ -71,20 +72,6 @@ Route::get('/getmaterialcontent/{materialId}', [AssignmentController::class, 'ge
 
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
-    Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
-    // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
-});
-Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
-Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
-Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
-// Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
-<<<<<<< HEAD
-Route::get('/getmaterialcontent/{materialId}', [TeacherAssignmentController::class, 'getMaterialContent']);
-=======
-Route::post('/filterassignments', [TeacherAssignmentController::class, 'filterAssignments']);
->>>>>>> 0bd7fe6384287e8ac70167279b9d3ce44694b247
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'fetchCourses']);
@@ -112,11 +99,25 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/post-announcement', [AnnouncementController::class, 'store']);
     Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
     Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+    Route::get('/announcement-items', [AnnouncementController::class, 'index']);
+    Route::post('/announcement-items', [AnnouncementController::class, 'store']);
+    Route::get('/announcement-items/{id}', [AnnouncementController::class, 'show']);
+    Route::put('/announcement-items/{id}', [AnnouncementController::class, 'update']);
+    Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+    Route::get('/announcement-items/content/{id}', [AnnouncementController::class, 'getAnnouncementContent']);
 });
 
 Route::post('/post-announcement', [AnnouncementController::class, 'store']);
 Route::get('/announcement-items-no-filter', [AnnouncementController::class, 'index']);
 Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+Route::get('/announcement-items', [AnnouncementController::class, 'index']);
+Route::post('/announcement-items', [AnnouncementController::class, 'store']);
+Route::get('/announcement-items/{id}', [AnnouncementController::class, 'show']);
+Route::put('/announcement-items/{id}', [AnnouncementController::class, 'update']);
+Route::delete('/announcement-items/{id}', [AnnouncementController::class, 'destroy']);
+Route::get('/announcement-items/content/{id}', [AnnouncementController::class, 'getAnnouncementContent']);
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/upload-material', [CourseMaterialController::class, 'uploadMaterial']);
@@ -126,9 +127,31 @@ Route::post('/upload-material', [CourseMaterialController::class, 'uploadMateria
 
 Route::get('/getallmaterials', [CourseMaterialController::class, 'getAllMaterials']);
 Route::post('/filtermaterials', [CourseMaterialController::class, 'filterMaterials']);
-<<<<<<< HEAD
 // Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
 // routes/web.php or routes/api.php
-=======
->>>>>>> 0bd7fe6384287e8ac70167279b9d3ce44694b247
 Route::get('/getmaterialcontent/{materialId}', [CourseMaterialController::class, 'getMaterialContent']);
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+    Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+    // Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+
+    Route::get('/getassignmentcontent/{assignmentId}', [TeacherAssignmentController::class, 'getMaterialContent']);
+});
+Route::get('/getassignmentcontent/{assignmentId}', [TeacherAssignmentController::class, 'getMaterialContent']);
+Route::get('/getassignmentcontent/${assignmentId}', [TeacherAssignmentController::class, 'getMaterialContent']);
+Route::post('/upload-assignment', [TeacherAssignmentController::class, 'uploadAssignment']);
+Route::get('/getallassignments', [TeacherAssignmentController::class, 'getAllAssignments']);
+// Route::post('/submit-assignment', [TeacherAssignmentController::class, 'submitAssignment']);
+
+Route::post('/filterassignments', [TeacherAssignmentController::class, 'filterAssignments']);
+
+
+
+
+Route::get('/notifications', [NotificationController::class, 'index']);
+Route::post('/notifications', [NotificationController::class, 'store']);
+Route::get('/notifications/{id}', [NotificationController::class, 'show']);
+Route::put('/notifications/{id}', [NotificationController::class, 'update']);
+Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);

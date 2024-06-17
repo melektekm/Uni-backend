@@ -149,22 +149,48 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function getEmployee(Request $request)
+    // public function getEmployee(Request $request)
+    // {
+    //     $request->validate([
+    //         'page' => 'integer|min:1',
+    //     ]);
+
+    //     $perPage = $request->input('per_page', 20);
+
+    //     $employees = DB::table('employees')
+    //         ->join('departments', 'employees.department', '=', 'departments.id')
+    //         ->leftJoin('accounts', 'employees.id', '=', 'accounts.employee_id')
+    //         ->select('employees.id', 'employees.name', 'employees.role', 'employees.status', 'employees.email', 'departments.name as department', 'departments.id as departmentId', 'employees.created_at', 'accounts.balance')
+    //         ->paginate($perPage);
+
+    //     return response()->json($employees);
+    // }
+    public function getEmployee()
     {
-        $request->validate([
-            'page' => 'integer|min:1',
-        ]);
+        try {
+            // Fetch all students
+            $students = Student::all();
 
-        $perPage = $request->input('per_page', 20);
+            // Fetch all employees
+            $employees = Employee::all();
 
-        $employees = DB::table('employees')
-            ->join('departments', 'employees.department', '=', 'departments.id')
-            ->leftJoin('accounts', 'employees.id', '=', 'accounts.employee_id')
-            ->select('employees.id', 'employees.name', 'employees.role', 'employees.status', 'employees.email', 'departments.name as department', 'departments.id as departmentId', 'employees.created_at', 'accounts.balance')
-            ->paginate($perPage);
+            // Combine the results
+            $users = $students->concat($employees);
 
-        return response()->json($employees);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Users retrieved successfully',
+                'users' => $users,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve users',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     public function updateEmployee(Request $request, $id)
     {

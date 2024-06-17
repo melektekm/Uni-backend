@@ -17,7 +17,7 @@ class Assignment extends Model
         'assignmentName',
         'assignmentDescription',
         'dueDate',
-        'file',
+        'file_path',
         'status',
     ];
     public function students()

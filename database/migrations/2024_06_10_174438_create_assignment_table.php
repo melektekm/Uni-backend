@@ -15,7 +15,7 @@ class CreateAssignmentTable extends Migration
             $table->string('assignmentName');
             $table->text('assignmentDescription')->nullable();
             $table->date('dueDate');
-            $table->string('file_path')->nullable();
+            $table->string('file_path');
             $table->timestamps();
         });
     }

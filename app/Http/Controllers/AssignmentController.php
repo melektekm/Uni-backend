@@ -52,32 +52,24 @@ class AssignmentController extends Controller
         return response()->json(['assignments' => $submittedAssignments], 200);
     }
 
-    public function getMaterialContent($materialId)
+    public function getMaterialContent($assignmentId)
     {
-        // Fetch the material from the database
-        $material = SubmittedAssignment::find($materialId);
+        try {
+            // Fetch the material from the database
+            $material = SubmittedAssignment::find($assignmentId);
 
-        if (!$material) {
-            return response()->json(['error' => 'Material not found'], 404);
+            $filePath = storage_path('app/' . $material->file_path);
+            // Assuming the file path is stored in the `file_path` column of the material
+            if (!file_exists($filePath)) {
+                return response()->json(['error' => 'File not found'], 404);
+            }
+
+            // Return the file as a response
+            return response()->file($filePath);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Assignment not found'], 404);
         }
-
-        // Assuming the file path is stored in the `file_path` column of the material
-        $filePath = $material->file_path;
-
-        // Check if the file exists in the storage
-        if (!Storage::exists($filePath)) {
-            return response()->json(['error' => 'File not found'], 404);
-        }
-
-        // Get the file content
-        $fileContent = Storage::get($filePath);
-        $fileMimeType = Storage::mimeType($filePath);
-        $fileName = basename($filePath);
-
-        // Return the file content as a response
-        return response($fileContent, 200)
-            ->header('Content-Type', $fileMimeType)
-            ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
     }
 
 }
