@@ -20,6 +20,13 @@ class ScheduleRequest extends Model
         'labInstructor',
         'classInstructor',
         'schedule_type',
+        'examDate',
+        'examTime',
+        'examRoom',
+        'examiner',
+        'yearGroup',
+        'year',
+        'status', 
     ];
 
     public function course()

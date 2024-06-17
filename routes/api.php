@@ -90,12 +90,18 @@ Route::post('/upload-course', [CourseController::class, 'uploadCourse']);
 Route::get('/course/name/{course_code}', [CourseController::class, 'getCourseName']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/get-schedules', [ScheduleController::class, 'index']);
+    Route::get('/get-schedules', [ScheduleRequestController::class, 'displaySchedule']);
     Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
     Route::delete('/schedule-requests/{id}', [ScheduleRequestController::class, 'destroy']);
+    Route::get('schedule-requests', [ScheduleRequestController::class, 'index']);
+Route::patch('schedule-requests/{id}/approve', [ScheduleRequestController::class, 'approve']);
+Route::patch('schedule-requests/{id}/reject', [ScheduleRequestController::class, 'reject']);
 });
 Route::post('/schedule-requests', [ScheduleRequestController::class, 'store']);
-Route::get('/get-schedules', [ScheduleController::class, 'index']);
+Route::get('/get-schedules', [ScheduleRequestController::class, 'displaySchedule']);
+Route::get('schedule-requests', [ScheduleRequestController::class, 'index']);
+Route::patch('schedule-requests/{id}/approve', [ScheduleRequestController::class, 'approve']);
+Route::patch('schedule-requests/{id}/reject', [ScheduleRequestController::class, 'reject']);
 // Route::get('/schedule-requests', [ScheduleController::class, 'index']);
 // Route::post('/schedule-requests', [ScheduleController::class, 'store']);
 // Route::delete('/schedule-requests/{id}', [ScheduleController::class, 'destroy']);

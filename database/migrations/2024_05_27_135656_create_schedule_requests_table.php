@@ -12,13 +12,20 @@ class CreateScheduleRequestsTable extends Migration
             $table->id();
             $table->string('course_code');
             $table->string('course_name');
-            $table->string('classroom');
+            $table->string('classroom'); 
+            $table->string('yearGroup');
+            $table->integer('year');
             $table->string('labroom')->nullable();
             $table->string('classDays');
             $table->string('labDays')->nullable();
             $table->string('labInstructor')->nullable();
             $table->string('classInstructor');
             $table->enum('schedule_type', ['Exam', 'Class']);
+            $table->date('examDate')->nullable();
+            $table->time('examTime')->nullable();
+            $table->string('examRoom')->nullable();
+            $table->string('examiner')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 
             $table->foreign('course_code')->references('course_code')->on('courses')->onDelete('cascade');
@@ -29,4 +36,5 @@ class CreateScheduleRequestsTable extends Migration
     {
         Schema::dropIfExists('schedule_requests');
     }
+
 }
