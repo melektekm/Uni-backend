@@ -16,10 +16,10 @@ class CreateScheduleRequestsTable extends Migration
             $table->string('yearGroup');
             $table->integer('year');
             $table->string('labroom')->nullable();
-            $table->string('classDays');
+            $table->string('classDays')->nullable();
             $table->string('labDays')->nullable();
             $table->string('labInstructor')->nullable();
-            $table->string('classInstructor');
+            $table->string('classInstructor')->nullable();
             $table->enum('schedule_type', ['Exam', 'Class']);
             $table->date('examDate')->nullable();
             $table->time('examTime')->nullable();
